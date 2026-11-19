@@ -2,7 +2,7 @@
 
 Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şartnameden sapmaları özetler.
 
-## Durum (v0.1, çalışır sürüm)
+## Durum (v0.3)
 - Vite + React 18 + TypeScript. Stil: düz CSS (`src/styles.css`). Tailwind kullanılmadı.
 - Oyun motoru `src/engine/` altında, React'ten bağımsız. Testler `src/engine/engine.test.ts`'te; 10 test var: deste kalibrasyonu, joker kenar durumları, skor.
   - `deck.ts`: seed'li deste üretimi (fiyat çapası, denge şablonu, tırmanan risk, çeşitlilik, Türk dokunuşu, gevşetme).
@@ -16,18 +16,22 @@ Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şa
 - Fiyat bandı ayarı (eşit/dar/orta/geniş) kaldırıldı. Deste artık programdan ölçülen mevki profilleriyle (`PROFILE`, deck.ts) üretiliyor: fiyat ve kâr kaleciden forvete büyüyor.
 - Tekrar önleme: son 6 oyunda çıkan oyuncular dışlanıyor (oyun kodu elle yazılmadıysa). "Aynı desteyi tekrar oyna" kayıtlı desteyi kullanıyor.
 
+## v0.3 değişiklikleri
+- PWA: `public/manifest.webmanifest`, ikonlar, `public/sw.js` (çevrimdışı). Service worker sadece kendi sitesinde (https, iframe değil) kaydolur.
+- Ana menüde "Telefona uygulama olarak ekle" (Android) ve iPhone ipucu, "Arkadaşına gönder" var.
+- Yayın: `.github/workflows/deploy.yml`, main'e her push'ta test + build + GitHub Pages. Adres: https://cetinumit.github.io/setdeger/
+- Commit'ler sadece Ümit Çetin adına atılır, Co-Authored-By satırı eklenmez.
+
 ## Şartnameden sapmalar ve varsayımlar
 - Blok penceresi 5 değil 10 saniye; aynı ekranda tartışmaya zaman kalsın diye.
 - Varsayılan takımlar "Turuncular" ve "Morlar" (8 renklik palet).
 - Paylaşım görseli yerine "Sonucu kopyala" butonu var; claude.ai artifact ortamı indirme ve Web Share'e izin vermiyor.
-- PWA (manifest/service worker) henüz yok. Artifact ortamında service worker çalışmaz; Vercel/Netlify'a taşınınca eklenmeli.
 
 ## Sıradaki işler
-1. PWA manifest + offline (kendi hosting'inde).
-2. Nasıl Oynanır ekranını görselli slaytlara çevirmek.
-3. Paylaşım görseli (canvas → PNG), kendi hosting'inde.
-4. Lighthouse kontrolü.
-5. Havuzu periyodik güncellemek (`npm run havuz`).
+1. Nasıl Oynanır ekranını görselli slaytlara çevirmek.
+2. Paylaşım görseli (canvas → PNG), kendi hosting'inde.
+3. Lighthouse kontrolü.
+4. Havuzu periyodik güncellemek (`npm run havuz`).
 
 ## Komutlar
 - `npm install`
