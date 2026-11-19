@@ -1,0 +1,254 @@
+bolum,mevki,kart_sezon,kart_deger_m,kart_yas,lig,mac,istatistik,oyuncu,guncel_yas,guncel_deger_m,secen
+1,KL,2019,6,21,League One (ING 3. lig),20,YG 26,Aaron Ramsdale,28,12,K
+1,KL,2021,10,22,Liga Portugal,33,YG 22,Diogo Costa,26,40,T
+1,KL,2021,8,23,Premier League,33,YG 22,Robert Sanchez,28,22,-
+1,SGB,2020,30,21,LaLiga,29,1/1,Jules Kounde,27,60,K
+1,SGB,2019,20,22,Ligue 1,23,0/3,Zeki Celik,29,14,-
+1,SGB,2019,18,21,Eredivisie,28,1/1,Noussair Mazraoui,28,18,T
+1,STP1,2020,22,22,Ligue 1,24,1/0,Gabriel Magalhaes,28,75,T
+1,STP1,2021,15,24,Serie A,33,5/1,Bremer,29,35,K
+1,STP1,2021,35,22,LaLiga,41,2/1,Ronald Araujo,27,20,-
+1,STP2,2019,40,23,Bundesliga,29,1/0,Manuel Akanji,30,17,K
+1,STP2,2021,25,22,Serie A,21,2/3,Cristian Romero,28,45,T
+1,STP2,2021,11,25,Super Lig,31,1/0,Kim Min-jae,29,20,-
+1,SLB,2022,32,22,Serie A,32,5/6,Theo Hernandez,28,20,K
+1,SLB,2021,10,23,Serie A,32,2/4,Federico Dimarco,28,50,T
+1,SLB,2019,30,23,Ligue 1,20,2/1,Ferland Mendy,31,4,-
+1,DOS,2023,40,23,Premier League,8,1/0,Sandro Tonali,26,80,-
+1,DOS,2023,60,22,Ligue 1,25,0/3,Manuel Ugarte,25,25,T
+1,DOS,2022,38,21,Premier League,37,1/1,Moises Caicedo,24,100,K
+1,MOS,2022,25,23,Premier League,35,10/2,Alexis Mac Allister,27,70,T
+1,MOS,2022,50,24,Serie A,36,3/9,Nicolo Barella,29,50,-
+1,MOS,2023,40,25,Premier League,37,6/6,Douglas Luiz,28,18,K
+1,OOS,2022,30,24,Premier League,38,10/4,Eberechi Eze,27,65,K
+1,OOS,2021,64,23,Premier League,25,8/4,Dele Alli,30,1,T
+1,OOS,2019,50,19,LaLiga,31,4/6,Martin Odegaard,27,65,-
+1,SGK,2022,65,20,Premier League,38,11/7,Bukayo Saka,24,110,-
+1,SGK,2022,75,22,Premier League,25,4/2,Antony,26,40,K
+1,SGK,2022,60,21,LaLiga,33,4/4,Rodrygo,25,45,T
+1,SLK,2023,35,21,Ligue 1,26,5/9,Bradley Barcola,23,70,K
+1,SLK,2023,50,21,LaLiga,36,6/4,Nico Williams,23,40,T
+1,SLK,2018,45,18,Bundesliga,34,12/18,Jadon Sancho,26,18,-
+1,SF,2023,30,21,LaLiga,26,12/4,Nicolas Jackson,25,40,T
+1,SF,2021,70,21,Serie A,37,21/2,Dusan Vlahovic,26,35,K
+1,SF,2022,50,22,Premier League,31,9/4,Julian Alvarez,26,100,-
+3,KL,2024,14,25,Serie A,30,YG 32,Mile Svilar,26,28,-
+3,KL,2023,4,20,Ligue 2,35,YG 45,Dogan Alemdar,23,1.5,K
+3,KL,2022,20,26,Serie A,41,YG 36,Andre Onana,30,10,T
+3,KL,2022,10,26,Ligue 1,48,YG 75,Alexander Nubel,29,12,-
+3,SGB,2021,15,21,Serie A,30,1/3,Wilfried Singo,26,23,K
+3,SGB,2022,30,23,Premier League,44,1/1,Emerson Royal,27,5,-
+3,SGB,2022,30,24,Premier League,34,0/1,Aaron Wan-Bissaka,28,15,-
+3,SGB,2022,35,21,Eredivisie,43,3/2,Jurrien Timber,25,70,T
+3,STP1,2020,32,19,Bundesliga,28,3/1,Ozan Kabak,26,15,T
+3,STP1,2022,30,21,Premier League,42,4/1,Marc Guehi,25,70,K
+3,STP1,2020,40,23,LaLiga,44,3/2,Pau Torres,29,20,-
+3,STP1,2022,32,24,Eredivisie,35,5/7,Lisandro Martinez,28,40,-
+3,STP2,2021,40,25,LaLiga,48,1/0,Clement Lenglet,34,4,-
+3,STP2,2023,30,22,Bundesliga,42,4/1,Micky van de Ven,25,50,T
+3,STP2,2021,25,25,Bundesliga,35,1/1,Jonathan Tah,29,28,-
+3,STP2,2022,17,25,Eredivisie,34,2/0,Marcos Senesi,29,25,K
+3,SLB,2022,15,22,Premier League,28,1/2,Nuno Tavares,26,12,T
+3,SLB,2021,20,21,LaLiga,39,1/2,Marc Cucurella,27,50,-
+3,SLB,2021,12,23,Bundesliga,38,1/18,David Raum,28,25,K
+3,SLB,2022,25,25,Premier League,33,1/2,Oleksandr Zinchenko,29,8,-
+3,DOS,2021,40,25,Bundesliga,32,1/1,Denis Zakaria,29,25,-
+3,DOS,2022,35,23,LaLiga,47,3/2,Martin Zubimendi,27,75,-
+3,DOS,2022,30,24,Eredivisie,41,5/1,Edson Alvarez,28,15,K
+3,DOS,2022,35,25,Premier League,28,0/0,Yves Bissouma,29,10,T
+3,MOS,2020,40,24,Serie A,50,14/6,Franck Kessie,29,12,-
+3,MOS,2021,30,24,Ligue 1,42,5/7,Bruno Guimaraes,28,70,-
+3,MOS,2022,50,26,Premier League,42,3/3,Kalvin Phillips,30,2.5,T
+3,MOS,2019,55,20,Premier League,41,1/3,Declan Rice,27,120,K
+3,OOS,2019,35,24,Liga Portugal,42,3/3,Bruno Fernandes,34,35,-
+3,OOS,2024,55,21,Premier League,42,5/7,Cole Palmer,24,100,K
+3,OOS,2023,50,23,Premier League,42,3/3,Dejan Kulusevski,26,17,-
+3,OOS,2023,70,20,Bundesliga,54,9/9,Xavi Simons,23,40,T
+3,SGK,2023,35,24,LaLiga,44,12/10,Brahim Diaz,26,35,T
+3,SGK,2022,60,22,Bundesliga,42,17/14,Moussa Diaby,26,25,-
+3,SGK,2020,60,22,Premier League,43,6/4,Christian Pulisic,24,55,-
+3,SGK,2023,35,23,Premier League,39,9/8,Bryan Mbeumo,26,75,K
+3,SLK,2022,45,23,Eredivisie,47,21/15,Cody Gakpo,27,60,K
+3,SLK,2023,50,22,Premier League,35,10/10,Mykhailo Mudryk,25,0,-
+3,SLK,2020,40,24,Liga Portugal,47,11/7,Luis Diaz,29,70,T
+3,SLK,2023,35,20,LaLiga,51,10/4,Ansu Fati,23,15,-
+3,SF,2020,40,21,Ligue 1,30,10/3,Victor Osimhen,27,75,-
+3,SF,2022,50,25,LaLiga,35,8/9,Ousmane Dembele,29,100,T
+3,SF,2022,45,23,LaLiga,45,7/3,Ferran Torres,26,50,K
+3,SF,2023,45,23,Ligue 1,42,21/4,Lois Openda,26,25,-
+4,KL,2024,8,27,Serie A,30,YG 32,Vanja Milinkovic-Savic,29,20,-
+4,KL,2021,20,25,Serie A,28,YG 26,Alex Meret,29,8,-
+4,KL,2023,20,21,LaLiga,42,YG 49,Giorgi Mamardashvili,25,28,T
+4,KL,2023,8,24,LaLiga,17,YG 32,Inaki Pena,27,4,K
+4,SGB,2021,20,21,Liga Portugal,35,5/7,Pedro Porro,26,45,-
+4,SGB,2020,24,22,Bundesliga,42,4/7,Konrad Laimer,29,32,T
+4,SGB,2021,25,20,LaLiga,31,0/3,Sergino Dest,25,18,K
+4,SGB,2022,25,25,Premier League,38,1/0,Kyle Walker-Peters,29,12,-
+4,STP1,2020,45,21,Serie A,41,0/4,Alessandro Bastoni,27,65,K
+4,STP1,2023,40,22,Premier League,22,2/0,Wesley Fofana,25,28,-
+4,STP1,2023,35,23,Bundesliga,44,3/2,Mohamed Simakan,26,20,-
+4,STP1,2022,30,24,Eredivisie,39,4/5,Lisandro Martinez,26,55,T
+4,STP2,2022,30,25,LaLiga,41,0/0,Robin Le Normand,29,20,-
+4,STP2,2024,25,22,Premier League,31,2/1,Radu Dragusin,24,16,K
+4,STP2,2022,30,24,Serie A,28,1/2,Merih Demiral,28,12,-
+4,STP2,2024,32,24,Premier League,39,0/2,Jan Paul van Hecke,26,60,T
+4,SLB,2024,25,21,Serie A,37,2/5,Riccardo Calafiori,24,55,T
+4,SLB,2022,20,25,Bundesliga,39,1/2,Angelino,29,5,-
+4,SLB,2023,25,20,Serie A,33,3/4,Destiny Udogie,23,30,-
+4,SLB,2022,20,22,Premier League,39,0/0,Tyrell Malacia,28,4,K
+4,DOS,2023,40,25,Premier League,26,6/2,Rodrigo Bentancur,29,20,K
+4,DOS,2022,35,24,Eredivisie,49,4/4,Ibrahim Sangare,28,20,-
+4,DOS,2022,30,20,Bundesliga,33,1/1,Ryan Gravenberch,24,80,-
+4,DOS,2024,25,22,Serie A,30,0/2,Nicolo Rovella,24,23,T
+4,MOS,2023,25,23,Bundesliga,32,3/6,Felix Nmecha,25,55,K
+4,MOS,2021,30,24,Premier League,40,0/4,Dani Ceballos,29,7,T
+4,MOS,2023,35,21,Serie A,42,3/3,Nicolo Fagioli,25,16,-
+4,MOS,2022,32,23,Premier League,40,12/3,Alexis Mac Allister,27,70,-
+4,OOS,2024,25,23,Serie A,50,14/11,Charles De Ketelaere,25,35,T
+4,OOS,2024,50,21,LaLiga,42,5/7,Fermin Lopez,23,100,K
+4,OOS,2022,35,19,Bundesliga,42,3/3,Giovanni Reyna,23,4,-
+4,OOS,2023,26,23,Serie A,42,2/3,Eljif Elmas,26,13,-
+4,SGK,2024,28,24,Premier League,36,8/3,Antoine Semenyo,26,80,K
+4,SGK,2019,40,22,LaLiga,26,2/3,Malcom,29,18,T
+4,SGK,2021,35,25,Premier League,51,18/13,Jarrod Bowen,29,30,-
+4,SGK,2023,40,22,Eredivisie,48,18/10,Mohammed Kudus,26,50,-
+4,SLK,2023,40,25,Serie A,44,16/5,Nico Gonzalez,28,22,-
+4,SLK,2023,38,22,Premier League,34,4/0,Anthony Gordon,25,80,K
+4,SLK,2022,40,25,Premier League,37,5/5,Allan Saint-Maximin,29,10,T
+4,SLK,2024,40,22,LaLiga,45,5/18,Alex Baena,25,40,BLOK
+4,SF,2023,45,22,Premier League,35,11/4,Joao Pedro,24,80,K
+4,SF,2022,50,22,Ligue 1,47,17/8,Amine Gouiri,26,28,-
+4,SF,2023,55,24,Premier League,51,14/8,Kai Havertz,27,55,T
+4,SF,2022,50,24,Serie A,54,9/7,Tammy Abraham,28,18,-
+5,KL,2023,12,24,Premier League,30,YG 32,Arijanet Muric,27,7,T
+5,KL,2024,16,23,Serie A,32,YG 34,Marco Carnesecchi,26,30,K
+5,KL,2023,20,28,LaLiga,20,YG 18,Kepa Arrizabalaga,31,5,-
+5,KL,2023,22,25,Premier League,25,YG 30,Robert Sanchez,28,22,-
+5,SGB,2024,18,23,Bundesliga,50,4/5,Josip Stanisic,26,40,T
+5,SGB,2024,25,26,LaLiga,46,2/6,Nahuel Molina,28,15,-
+5,SGB,2023,20,26,Serie A,31,0/3,Davide Calabria,29,4,-
+5,SGB,2024,17,24,Serie A,35,2/3,Timothy Weah,26,20,K
+5,STP1,2022,35,20,Bundesliga,46,2/3,Josko Gvardiol,24,70,K
+5,STP1,2025,40,22,LaLiga,57,0/2,Raul Asencio,23,20,T
+5,STP1,2024,30,20,Ligue 1,24,2/0,Lucas Beraldo,22,22,-
+5,STP1,2023,30,22,Serie A,27,0/0,Malick Thiaw,25,45,-
+5,STP2,2024,32,24,Premier League,39,0/2,Jan Paul van Hecke,26,60,T
+5,STP2,2022,30,22,Ligue 1,32,3/1,Sven Botman,26,35,-
+5,STP2,2024,40,26,Serie A,35,4/0,Fikayo Tomori,28,17,K
+5,STP2,2024,30,25,Bundesliga,29,0/2,Hiroki Ito,27,18,-
+5,SLB,2024,30,22,Bundesliga,38,3/2,Ian Maatsen,24,30,-
+5,SLB,2025,18,25,LaLiga,54,1/5,Fran Garcia,27,10,T
+5,SLB,2022,25,25,Premier League,31,2/3,Sergio Reguilon,29,4,K
+5,SLB,2022,25,25,Serie A,42,2/5,Federico Dimarco,28,50,-
+5,DOS,2021,35,23,Serie A,43,3/5,Manuel Locatelli,28,25,-
+5,DOS,2024,32,23,Bundesliga,36,4/2,Angelo Stiller,25,45,T
+5,DOS,2022,40,24,Premier League,40,5/5,Bruno Guimaraes,28,70,K
+5,DOS,2022,40,25,Premier League,31,2/1,Wilfred Ndidi,29,8,-
+5,MOS,2023,60,20,LaLiga,59,0/2,Eduardo Camavinga,23,50,K
+5,MOS,2025,35,25,Serie A,50,7/5,Davide Frattesi,26,22,-
+5,MOS,2022,55,21,Liga Portugal,51,4/9,Enzo Fernandez,25,100,T
+5,MOS,2023,38,23,Premier League,51,15/7,Joe Willock,27,14,-
+5,OOS,2025,45,21,Ligue 1,48,13/21,Rayan Cherki,23,90,K
+5,OOS,2022,40,21,Serie A,42,8/9,Nicolo Zaniolo,27,15,-
+5,OOS,2023,50,23,Premier League,37,11/2,Joao Felix,26,28,T
+5,OOS,2024,30,22,Eredivisie,40,9/14,Malik Tillman,26,30,-
+5,SGK,2023,60,23,Premier League,47,10/5,Antony,26,40,-
+5,SGK,2024,50,23,Serie A,37,12/7,Joshua Zirkzee,25,20,-
+5,SGK,2025,40,22,Premier League,50,13/12,Amad Diallo,24,49,T
+5,SGK,2023,38,24,Premier League,39,9/8,Bryan Mbeumo,27,75,K
+5,SLK,2024,50,21,Ligue 1,42,5/9,Bradley Barcola,24,90,K
+5,SLK,2024,50,20,Bundesliga,58,11/10,Jamie Gittens,22,30,T
+5,SLK,2022,50,22,Serie A,42,14/12,Rafael Leao,27,50,-
+5,SLK,2023,55,22,Premier League,41,7/3,Jadon Sancho,26,18,-
+5,SF,2024,40,20,Bundesliga,34,16/8,Benjamin Sesko,23,75,T
+5,SF,2024,60,25,Ligue 1,36,12/4,Randal Kolo Muani,27,20,-
+5,SF,2021,40,24,LaLiga,52,24/0,Youssef En-Nesyri,29,17,K
+5,SF,2022,30,25,LaLiga,32,2/13,Ousmane Dembele,29,100,-
+6,KL,2023-24,15,21,Premier League,28,YG 62,James Trafford,23,35,T
+6,KL,2023-24,18,22,Ligue 1,44,YG 41,Lucas Chevalier,24,22,-
+6,KL,2024-25,20,22,LaLiga,24,YG 22,Filip Jorgensen,24,15,-
+6,KL,2023-24,25,24,LaLiga,31,YG 32,Andriy Lunin,27,12,K
+6,SGB,2023-24,45,22,Bundesliga,47,14/12,Jeremie Frimpong,25,30,-
+6,SGB,2023-24,40,22,Premier League,5,1/0,Jurrien Timber,25,70,K
+6,SGB,2024-25,40,20,Premier League,44,2/5,Rico Lewis,21,25,-
+6,SGB,2023-24,28,26,Bundesliga,43,1/4,Konrad Laimer,29,32,T
+6,STP1,2021-22,28,21,Bundesliga,36,0/0,Maxence Lacroix,26,60,-
+6,STP1,2024-25,53,26,Premier League,34,0/2,Pau Torres,29,20,K
+6,STP1,2022-23,32,23,Bundesliga,44,2/1,Evan Ndicka,27,35,T
+6,STP1,2023-24,35,26,Eredivisie,48,7/3,David Hancko,28,35,-
+6,STP2,2022-23,50,25,Bundesliga,45,2/2,Kim Min-jae,29,20,-
+6,STP2,2023-24,42,21,Premier League,41,3/1,Jarrad Branthwaite,24,45,K
+6,STP2,2023-24,35,24,Bundesliga,46,3/1,Edmond Tapsoba,27,35,T
+6,STP2,2022-23,40,23,Bundesliga,43,1/2,Dayot Upamecano,27,75,-
+6,SLB,2021-22,35,20,Bundesliga,46,2/3,Josko Gvardiol,24,75,-
+6,SLB,2024-25,45,21,Premier League,36,0/1,Destiny Udogie,23,25,-
+6,SLB,2024-25,28,25,Premier League,13,3/0,Ferdi Kadioglu,27,40,K
+6,SLB,2024-25,45,20,Premier League,41,2/6,Milos Kerkez,22,35,T
+6,DOS,2022-23,25,20,LaLiga,44,2/2,Nico Gonzalez (ESP orta saha),24,50,K
+6,DOS,2023-24,20,25,Premier League,40,2/2,Sander Berge,28,25,-
+6,DOS,2022-23,33,24,Serie A,40,3/2,Ismael Bennacer,28,8,T
+6,DOS,2024-25,18,22,Serie A,39,3/3,Kristjan Asllani,24,12,-
+6,MOS,?,55,?,?,?,?,Youri Tielemans,29,40,K
+6,MOS,?,60,?,?,?,?,Gavi,22,25,T
+6,MOS,2023-24,55,21,Premier League,35,1/3,Moises Caicedo,24,100,-
+6,MOS,2024-25,55,21,LaLiga,44,3/4,Pablo Barrios,23,70,-
+6,OOS,2023-24,40,24,Premier League,42,6/10,Morgan Gibbs-White,26,80,K
+6,OOS,2022-23,40,24,Bundesliga,31,5/11,Dani Olmo,28,60,T
+6,OOS,2024-25,60,24,LaLiga,36,17/3,Oihan Sancet,26,25,-
+6,OOS,2024-25,42,22,Bundesliga,43,12/8,Enzo Millot,24,25,-
+6,SGK,2022-23,40,21,Bundesliga,32,9/6,Karim Adeyemi,24,40,-
+6,SGK,2023-24,32,23,Premier League,43,4/6,Pedro Neto,26,60,T
+6,SGK,2023-24,38,26,Premier League,52,14/14,Leon Bailey,29,9,K
+6,SGK,2024-25,30,22,Ligue 1,43,7/12,Maghnes Akliouche,24,50,-
+6,SLK,2024-25,25,24,Eredivisie,47,18/19,Igor Paixao,26,35,-
+6,SLK,2024-25,35,24,Premier League,37,11/0,Iliman Ndiaye,26,65,K
+6,SLK,2023-24,25,25,Liga Portugal,43,8/6,Kerem Akturkoglu,27,18,-
+6,SLK,2022-23,35,24,Ligue 1,41,7/3,Martin Terrier,29,8,T
+6,SF,2019-20,40,21,LaLiga,27,2/2,Luka Jovic,27,9,K
+6,SF,2020-21,40,21,LaLiga,44,17/2,Alexander Isak,27,90,T
+6,SF,2020-21,40,22,Liga Portugal,41,34/4,Darwin Nunez,27,20,-
+6,SF,2023-24,40,25,Bundesliga,38,15/5,Donyell Malen,27,55,-
+7,KL,2023-24,20,22,LaLiga,37,YG 64,Filip Jorgensen,24,15,-
+7,KL,2023-24,22,22,Premier League,38,YG 73,Illan Meslier,26,6,T
+7,KL,2023-24,18,22,Premier League,27,YG 33,Bart Verbruggen,24,40,-
+7,KL,2023-24,18,20,Ligue 1,31,YG 39,Guillaume Restes,21,18,K
+7,SGB,2023-24,25,19,Serie A,37,1/4,Michael Kayode,22,40,T
+7,SGB,2023-24,25,22,Bundesliga,39,2/10,Yann Couto,24,17,-
+7,SGB,2021-22,25,24,Serie A,44,2/5,Davide Calabria,29,4,-
+7,SGB,2024-25,25,25,Premier League,32,3/2,Reece James,29,60,K
+7,STP1,2023-24,38,24,Bundesliga,43,1/1,Ibrahima Konate,27,45,K
+7,STP1,2022-23,35,23,Ligue 1,34,0/2,Jean-Clair Todibo,26,22,-
+7,STP1,2023-24,40,25,LaLiga,44,2/1,Eder Militao,28,18,-
+7,STP1,2023-24,35,22,Bundesliga,44,0/2,Willian Pacho,25,80,T
+7,STP2,2023-24,40,25,Premier League,45,2/2,Axel Disasi,28,15,-
+7,STP2,2023-24,30,24,Serie A,21,2/2,Yann Bisseck,24,50,T
+7,STP2,2023-24,25,24,Ligue 1,46,3/1,Kevin Danso,27,20,K
+7,STP2,2022-23,40,22,Liga Portugal,52,4/3,Goncalo Inacio,25,35,-
+7,SLB,2024-25,35,26,Premier League,46,2/3,Antonee Robinson,29,22,T
+7,SLB,2023-24,40,22,Bundesliga,38,3/2,Ian Maatsen,24,35,-
+7,SLB,2024-25,28,20,Premier League,41,7/4,El Hadji Malick Diouf,21,35,K
+7,SLB,2022-23,28,25,Premier League,33,0/2,Marc Cucurella,28,60,-
+7,DOS,2023-24,40,24,Liga Portugal,49,4/4,Morten Hjulmand,27,45,-
+7,DOS,2023-24,55,23,Premier League,37,3/1,Amadou Onana,25,40,-
+7,DOS,2022-23,50,23,Serie A,48,2/10,Sandro Tonali,26,90,T
+7,DOS,2023-24,30,21,LaLiga,39,3/3,Marc Casado,23,15,K
+7,MOS,2022-23,40,22,Bundesliga,31,1/1,Manu Kone,25,60,-
+7,MOS,2023-24,55,25,Premier League,53,10/10,Douglas Luiz,28,18,-
+7,MOS,2023-24,45,22,Premier League,35,3/3,Pape Matar Sarr,24,30,T
+7,MOS,2022-23,42,23,Premier League,40,12/3,Alexis Mac Allister,27,70,K
+7,OOS,2021-22,60,20,Premier League,45,14/11,Phil Foden,26,65,-
+7,OOS,2022-23,50,22,Bundesliga,46,10/13,Dominik Szoboszlai,26,100,K
+7,OOS,2023-24,55,26,Premier League,43,8/7,Lucas Paqueta,29,27,-
+7,OOS,2021-22,52,24,Premier League,29,2/1,Dele Alli,30,1,T
+7,SGK,2022-23,35,21,Eredivisie,47,10/5,Antony,26,40,-
+7,SGK,2023-24,50,23,Premier League,38,5/11,Brennan Johnson,25,25,K
+7,SGK,2021-22,50,20,Premier League,24,6/2,Mason Greenwood,25,40,-
+7,SGK,2024-25,40,25,Premier League,42,13/7,Antoine Semenyo,26,80,T
+7,SLK,2021-22,40,24,Liga Portugal,54,22/11,Luis Diaz,29,70,-
+7,SLK,2024-25,50,20,Premier League,58,11/10,Alejandro Garnacho,22,22,-
+7,SLK,2024-25,50,19,Serie A,52,12/9,Kenan Yildiz,21,75,K
+7,SLK,2022-23,50,20,LaLiga,51,10/4,Ansu Fati,24,15,T
+7,SF,2023-24,60,24,Premier League,27,2/2,Kai Havertz,27,60,-
+7,SF,2023-24,60,23,Serie A,38,18/3,Dusan Vlahovic,26,32,K
+7,SF,2021-22,50,22,Serie A,32,18/6,Victor Osimhen,27,65,T
+7,SF,2024-25,50,23,Premier League,38,15/5,Joao Pedro,25,100,-
