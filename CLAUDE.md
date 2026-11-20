@@ -22,6 +22,10 @@ Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şa
 - Yayın: `.github/workflows/deploy.yml`, main'e her push'ta test + build + GitHub Pages. Adres: https://cetinumit.github.io/setdeger/
 - Commit'ler sadece Ümit Çetin adına atılır, Co-Authored-By satırı eklenmez.
 
+## v0.4 değişiklikleri
+- Kâr dengesi: her mevkideki kartların kâr ortalaması videodaki gibi hafif artıda tutuluyor (kabul −7…+14M, hedef −2…+7M). Kart başına ort. kâr ≈ +2M; rastgele oynayan takım ort. ≈ +20M bitirir. Eskiden ≈ −12M'ydi ve oyunlar −150'lerde bitiyordu.
+- Fiyat çapaları yükseltildi: kart değeri ort. KL 16M → SF 44M (video 15 → 47M).
+
 ## Şartnameden sapmalar ve varsayımlar
 - Blok penceresi 5 değil 10 saniye; aynı ekranda tartışmaya zaman kalsın diye.
 - Varsayılan takımlar "Turuncular" ve "Morlar" (8 renklik palet).

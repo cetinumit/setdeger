@@ -34,13 +34,15 @@ describe('deste üretimi', () => {
   it('kalibrasyon: Klasik ayarda 500 seed (videodaki profiller)', () => {
     const s = defaultSettings();
     const bands: number[] = []; let balanced = 0, total = 0;
-    const magKL: number[] = [], magSF: number[] = [], valKL: number[] = [], valSF: number[] = [];
+    const magKL: number[] = [], magSF: number[] = [], valKL: number[] = [], valSF: number[] = [], allProfit: number[] = [], teamExp: number[] = [];
     for (let i = 0; i < 500; i++) {
       const d = buildDeck(pool, s, 'kal' + i);
+      teamExp.push(d.slots.reduce((a, sl) => a + sl.cards.reduce((b, c) => b + c.profit, 0) / sl.cards.length, 0));
       const pids = d.slots.flatMap(x => x.cards.map(c => c.pid));
       expect(new Set(pids).size).toBe(pids.length);
       for (const sl of d.slots) {
         const v = sl.cards.map(c => c.value);
+        allProfit.push(...sl.cards.map(c => c.profit));
         bands.push(Math.max(...v) - Math.min(...v));
         const up = sl.cards.filter(c => c.profit > 1).length, dn = sl.cards.filter(c => c.profit < -1).length;
         total++; if (up === 2 && dn === 2) balanced++;
@@ -57,6 +59,9 @@ describe('deste üretimi', () => {
     expect(avg(valSF)).toBeGreaterThan(40); expect(avg(valSF)).toBeLessThan(54);
     expect(avg(magKL)).toBeGreaterThan(7); expect(avg(magKL)).toBeLessThan(14);
     expect(avg(magSF)).toBeGreaterThan(23); expect(avg(magSF)).toBeLessThan(35);
+    // videoda kart başına ort. kâr +2,4M; rastgele oynayan takım 11 mevkide ort. +6…+78M
+    expect(avg(allProfit)).toBeGreaterThan(-1); expect(avg(allProfit)).toBeLessThan(6);
+    expect(avg(teamExp)).toBeGreaterThan(0); expect(avg(teamExp)).toBeLessThan(60);
   }, 120_000);
 
   it('tüm ön ayarlar ve uç ayarlar deste üretebilir', () => {

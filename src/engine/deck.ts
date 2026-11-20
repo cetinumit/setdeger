@@ -17,7 +17,13 @@ import type { Card, Deck, Pool, Pos, Settings, Slot } from './types';
  *   Kanat | 42-45M           | ~13M                  | 23-25M     | ~70M
  *   SF    | 47M              | ~10M                  | 29M        | ~80M
  * Yani hücuma doğru hem fiyatlar hem kâr/zarar büyüyor; aynı mevkide fiyatlar yakın, sonuçlar uzak.
+ *
+ * Denge: programda bir mevkideki kartların kâr ortalaması hafif artıda (medyan +1,2M, ort. +2,6M,
+ * aralık −6…+22M); kart başına ort. +2,4M. Yani kârlılar ile zararlılar birbirini kabaca dengeler,
+ * rastgele oynayan takım bile maçı eksi yüzlerde bitirmez.
  */
+export const SLOT_MEAN: [number, number] = [-7, 14];   // kabul edilen mevki ortalaması (M €)
+export const SLOT_MEAN_GOAL: [number, number] = [-2, 7]; // hedef bu aralıktan rastgele
 
 export interface PosProfile {
   anchor: [number, number];   // mevkinin fiyat merkezi bu aralıktan çekilir (M €)
@@ -28,15 +34,15 @@ export interface PosProfile {
 
 export const PROFILE: Record<Pos, PosProfile> = {
   KL: { anchor: [9, 22], band: [6, 16], target: 10, minSpread: 15 },
-  SGB: { anchor: [18, 36], band: [10, 22], target: 16, minSpread: 25 },
-  SLB: { anchor: [18, 36], band: [10, 22], target: 17, minSpread: 25 },
-  STP: { anchor: [24, 42], band: [12, 26], target: 19, minSpread: 30 },
-  DOS: { anchor: [26, 46], band: [12, 26], target: 23, minSpread: 38 },
-  MOS: { anchor: [32, 56], band: [15, 30], target: 28, minSpread: 42 },
-  OOS: { anchor: [34, 56], band: [16, 34], target: 29, minSpread: 45 },
-  SGK: { anchor: [32, 60], band: [12, 26], target: 24, minSpread: 40 },
-  SLK: { anchor: [30, 55], band: [10, 22], target: 25, minSpread: 40 },
-  SF: { anchor: [38, 58], band: [10, 26], target: 29, minSpread: 45 },
+  SGB: { anchor: [20, 38], band: [10, 22], target: 16, minSpread: 25 },
+  SLB: { anchor: [20, 38], band: [10, 22], target: 17, minSpread: 25 },
+  STP: { anchor: [27, 45], band: [12, 26], target: 19, minSpread: 30 },
+  DOS: { anchor: [29, 50], band: [12, 26], target: 23, minSpread: 38 },
+  MOS: { anchor: [38, 62], band: [15, 30], target: 28, minSpread: 42 },
+  OOS: { anchor: [38, 60], band: [16, 34], target: 29, minSpread: 45 },
+  SGK: { anchor: [38, 64], band: [12, 26], target: 24, minSpread: 40 },
+  SLK: { anchor: [36, 60], band: [10, 22], target: 25, minSpread: 40 },
+  SF: { anchor: [42, 62], band: [10, 26], target: 29, minSpread: 45 },
 };
 
 // Tırmanan risk kapalıyken: tüm mevkiler orta seviyede
@@ -81,6 +87,7 @@ export function buildSlot(
     const widen = 1 + 0.5 * relax;
     const found: { cards: Card[]; score: number }[] = [];
     const goal = P.target * (0.8 + 0.4 * rng()); // her mevkide hedef biraz oynasın
+    const meanGoal = SLOT_MEAN_GOAL[0] + rng() * (SLOT_MEAN_GOAL[1] - SLOT_MEAN_GOAL[0]);
     for (let t = 0; t < TRIES_PER_LEVEL && found.length < CANDIDATES; t++) {
       const anchor = relax < 3 ? P.anchor[0] + rng() * (P.anchor[1] - P.anchor[0]) : pick(rng, pool).value;
       const band = (P.band[0] + rng() * (P.band[1] - P.band[0])) * widen;
@@ -102,6 +109,8 @@ export function buildSlot(
       const profits = chosen.map(c => c.profit);
       const spread = Math.max(...profits) - Math.min(...profits);
       if (relax < 2 && spread < P.minSpread) continue;
+      const mean = profits.reduce((a, p) => a + p, 0) / n;
+      if (relax < 3 && (mean < SLOT_MEAN[0] * widen || mean > SLOT_MEAN[1] * widen)) continue;
       if (relax < 3) {
         if (new Set(chosen.map(c => c.season)).size < 2) continue;
         if (new Set(chosen.map(c => c.league)).size < 2) continue;
@@ -109,7 +118,7 @@ export function buildSlot(
       }
       if (wantTr && relax < 2 && !chosen.some(c => c.tags.includes('tr_bag'))) continue;
       const meanAbs = profits.reduce((a, p) => a + Math.abs(p), 0) / n;
-      found.push({ cards: chosen, score: Math.abs(meanAbs - goal) + Math.max(0, P.minSpread - spread) });
+      found.push({ cards: chosen, score: Math.abs(meanAbs - goal) + 1.5 * Math.abs(mean - meanGoal) + Math.max(0, P.minSpread - spread) });
     }
     if (found.length) {
       // en iyi birkaç aday arasından rastgele: hep aynı "mükemmel" kombinasyon gelmesin

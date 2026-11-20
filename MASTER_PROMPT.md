@@ -170,6 +170,8 @@ Uygulama: `src/engine/deck.ts` içindeki `PROFILE` tablosu. Her mevki için şu 
 
 Her mevkide 24'e kadar geçerli kombinasyon toplanır, hedefe en yakın 4 tanesinden biri rastgele seçilir.
 
+**Kâr dengesi:** Programda bir mevkideki kartların kâr ortalaması hafif artıdadır (medyan +1,2M, ortalama +2,6M, aralık −6…+22M). Kart başına ortalama +2,4M'dir. Deste de bunu korumalı: mevki ortalaması −7…+14M aralığında kalmalı. Böylece rastgele oynayan takım bile maçı eksi yüzlerde bitirmez.
+
 **Tekrar önleme:** Oyun kodu boş bırakıldıysa, son 6 oyunda çıkan oyuncular dışlanır (`localStorage`). Kod elle yazıldıysa dışlama yapılmaz; aynı kod hep aynı desteyi verir.
 
 Genel kurallar:
