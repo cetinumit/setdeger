@@ -101,7 +101,8 @@ Bulgu: oyuncuları tanımayan biri "hep en genci al" taktiğiyle de iyi sonuç a
 | | Griddy | v0.5.1 | v0.5.2 |
 |---|---|---|---|
 | En genç kart kâr ediyor | %64 | %70 | %65 |
-| "Hep en genç" taktiğinin mükemmel oyuna oranı | %31 | %45 | %39 |
-| "Hep en ucuz" taktiğinin mükemmel oyuna oranı | %40 | %22 | %23 |
+| "Hep en genç" taktiğinin mükemmel oyuna oranı | %31 | %45 | %40 |
+| "Hep en ucuz" taktiğinin mükemmel oyuna oranı | %40 | %22 | %22 |
 
 Düzeltme: yaş daha sıkı eşleşiyor (`AGE_SD`), elin yaş ve fiyat sırası şablondakine benzetiliyor (`AGE_RANK_W`, `RANK_W`). Kalan fark, tekrar önleme altında havuzda kolay karşılanan şablonların biraz daha sık kullanılmasından geliyor.
+Benzerlik v0.5.2: ort. KS 0,211, AUC 0,61. Sıra uyumu yalnızca kombinasyon seçiminde sayılıyor; şablon elemede sayılsaydı 16 şablon hiç kullanılamıyordu.

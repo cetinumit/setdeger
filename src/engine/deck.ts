@@ -161,7 +161,7 @@ function adaptTemplate(rng: Rng, t: Template, n: number): TCard[] {
 
 // Yaş sıkı eşleşir: gevşek olunca kâr eden kartlar Griddy'dekinden genç geliyor ve
 // "hep en genci al" taktiği fazla kazandırıyor (Griddy'de kâr eden/zarar eden yaş farkı 0,5 yıl).
-const AGE_SD = 1.5;
+const AGE_SD = 2;
 
 /** Bir kartın şablon kartına uzaklığı (≈ standart sapma kareleri toplamı; 0 = birebir). */
 function cardDist(c: Card, x: TCard, scale: number, peakMin: number) {
@@ -196,7 +196,8 @@ function handDist(cards: Card[], tc: TCard[], scale: number) {
   const d5 = tc.every(x => x.a !== null) ? rankGap(cards.map(c => c.age), tc.map(x => x.a as number)) : 0;
   const d6 = rankGap(cards.map(c => c.value), tc.map(x => x.v));
   const seasons = new Set(cards.map(c => c.season)).size, leagues = new Set(cards.map(c => c.league)).size;
-  return d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4 + AGE_RANK_W * d5 + RANK_W * d6 + (seasons < 2 ? 4 : 0) + (leagues < 2 ? 4 : 0);
+  const order = AGE_RANK_W * d5 + RANK_W * d6;
+  return { d: d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4 + order + (seasons < 2 ? 4 : 0) + (leagues < 2 ? 4 : 0), order };
 }
 
 /**
@@ -221,9 +222,9 @@ export function buildSlotTemplate(
   const TOP = 6;
   // Şablonlar arasında "en kolayı" seçmiyoruz: öyle yapınca havuzda karşılığı bol olan birkaç şablon
   // (ucuz ve küçük kârlı olanlar) eli ele geçiriyor. Sıradaki şablon yeterince karşılanabiliyorsa o kullanılır.
-  let best: { d: number; cards: Card[]; src: string } | null = null;
+  let best: { d: number; fit: number; cards: Card[]; src: string } | null = null;
   for (const t of list.slice(0, 8)) {
-    let bestT: { d: number; cards: Card[]; src: string } | null = null;
+    let bestT: { d: number; fit: number; cards: Card[]; src: string } | null = null;
     const tc = adaptTemplate(rng, t, n);
     const scale = SCALE[0] + rng() * (SCALE[1] - SCALE[0]);
     // her şablon kartı için en yakın adaylar (rastgele kırpıntı: hep aynı oyuncu gelmesin)
@@ -268,15 +269,18 @@ export function buildSlotTemplate(
         cards.push(opts[j].c); dSum += Math.max(0, opts[j].d);
       }
       if (!ok) continue;
-      const d = dSum / n + handDist(cards, tc, scale);
-      if (!bestT || d < bestT.d) bestT = { d, cards, src: t.src };
+      // sıra uyumu en iyi kombinasyonu seçerken sayılır ama şablonu elemek için sayılmaz,
+      // yoksa bazı şablonlar hiç karşılanamıyor ve çeşitlilik düşüyor
+      const h = handDist(cards, tc, scale);
+      const d = dSum / n + h.d;
+      if (!bestT || d < bestT.d) bestT = { d, fit: d - h.order, cards, src: t.src };
     }
-    if (bestT && (!best || bestT.d < best.d)) best = bestT;
-    if (bestT && bestT.d < ACCEPT) { best = bestT; break; }
+    if (bestT && (!best || bestT.fit < best.fit)) best = bestT;
+    if (bestT && bestT.fit < ACCEPT) { best = bestT; break; }
   }
-  if (!best || best.d > MAX_D) return null;
+  if (!best || best.fit > MAX_D) return null;
   usedT.add(best.src);
-  const relax = best.d < 1.5 ? 0 : best.d < 3.5 ? 1 : best.d < 7 ? 2 : 3;
+  const relax = best.fit < 1.5 ? 0 : best.fit < 3.5 ? 1 : best.fit < 7 ? 2 : 3;
   return { pos, cards: shuffle(rng, best.cards), relax, tpl: best.src };
 }
 
