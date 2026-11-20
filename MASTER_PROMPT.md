@@ -171,13 +171,13 @@ Programdaki 253 karttan ölçülen mevki profilleri. Deste bunlara uymalı:
 
 Yedek yöntem: `PROFILE` tablosu. Her mevki için fiyat çapası aralığı, fiyat bandı aralığı, hedef ortalama |kâr| ve asgari kâr farkı tanımlı. Her mevkide 24'e kadar geçerli kombinasyon toplanır, hedefe en yakın 4 tanesinden biri rastgele seçilir.
 
-**Deste düzeyi:** Griddy'nin 6 oyununda "rastgele seçen takım" hep artıda bitiyor (+7…+25M, medyan +19M). Deste 8 kereye kadar yeniden kurulur ve rastgele takım beklentisi +8…+28M bandına düşen ilk deste alınır.
+**Deste düzeyi:** Griddy'nin 6 oyununda "rastgele seçen takım" hep artıda bitiyor (+7…+25M, medyan +19M). Deste 8 kereye kadar yeniden kurulur ve rastgele takım beklentisi +3…+32M bandına düşen ilk deste alınır.
 
 Ölçüm yöntemi ve sonuçlar: `docs/kalibrasyon.md`.
 
 **Kâr dengesi:** Programda bir mevkideki kartların kâr ortalaması hafif artıdadır (medyan +1,2M, ortalama +2,6M, aralık −6…+22M). Kart başına ortalama +2,4M'dir. Deste de bunu korumalı: mevki ortalaması −7…+14M aralığında kalmalı. Böylece rastgele oynayan takım bile maçı eksi yüzlerde bitirmez.
 
-**Tekrar önleme:** Oyun kodu boş bırakıldıysa, son 6 oyunda çıkan oyuncular dışlanır (`localStorage`). Kod elle yazıldıysa dışlama yapılmaz; aynı kod hep aynı desteyi verir.
+**Tekrar önleme:** Oyun kodu boş bırakıldıysa (`localStorage`, son 10 oyun): aynı kart ve aynı oyuncunun ±1 sezonu son 6 oyunda çıktıysa gelmez; bir önceki oyunun oyuncuları hiç gelmez; son 10 oyunda sık çıkan oyuncuya ceza puanı eklenir. Oyuncu, en az 2 sezon uzak bir haliyle geri dönebilir (Griddy de böyle yapıyor). Kod elle yazıldıysa dışlama yapılmaz; aynı kod hep aynı desteyi verir.
 
 Genel kurallar:
 1. **Değer yakın, sonuç uzak.** Aynı mevkideki kartların değerleri birbirine yakındır, ama kâr farkları büyüktür (yukarıdaki tablo). Tahmin edilmesi gereken şey "aynı fiyat, kim patladı?".

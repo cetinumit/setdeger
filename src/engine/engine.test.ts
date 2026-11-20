@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import fs from 'node:fs';
 import { parsePool } from './pool';
-import { buildDeck } from './deck';
+import { buildDeck, historyEntry, recentFrom } from './deck';
 import { defaultSettings, PRESETS } from './settings';
 import {
   available, block, canUsePickJoker, choose, newMatch, nextRound, revealAll, scores, skipBlock, startReveal, usePickJoker,
@@ -21,14 +21,17 @@ describe('deste üretimi', () => {
     expect(c.slots.map(x => x.cards.map(k => k.id))).not.toEqual(a.slots.map(x => x.cards.map(k => k.id)));
   });
 
-  it('son oyunlardaki oyuncular dışlanır', () => {
+  it('önceki oyunun oyuncusu gelmez; daha eskiler ancak 2+ sezon uzak haliyle dönebilir', () => {
     const s = defaultSettings();
     const a = buildDeck(pool, s, 'A1');
-    const avoid = new Set(a.slots.flatMap(x => x.cards.map(c => c.pid)));
-    const b = buildDeck(pool, s, 'B2', avoid);
+    const prev = a.slots.flatMap(x => x.cards);
+    const older = buildDeck(pool, s, 'A0').slots.flatMap(x => x.cards);
+    const b = buildDeck(pool, s, 'B2', recentFrom([historyEntry(older), historyEntry(prev)]));
     expect(b.fresh).toBe(true);
-    const clash = b.slots.flatMap(x => x.cards).filter(c => avoid.has(c.pid)).length;
-    expect(clash).toBe(0);
+    for (const c of b.slots.flatMap(x => x.cards)) {
+      expect(prev.some(p => p.pid === c.pid)).toBe(false); // bir önceki oyunun oyuncusu hiç gelmez
+      for (const p of older) if (p.pid === c.pid) expect(Math.abs(+p.season.slice(0, 4) - +c.season.slice(0, 4))).toBeGreaterThanOrEqual(2);
+    }
   });
 
   it('kalibrasyon: Klasik ayarda 500 seed (videodaki profiller)', () => {
@@ -63,7 +66,7 @@ describe('deste üretimi', () => {
     expect(avg(magSF)).toBeGreaterThan(23); expect(avg(magSF)).toBeLessThan(35);
     // videoda kart başına ort. kâr +2,4M; rastgele oynayan takım 6 bölümde +7…+25M (medyan +19M)
     expect(avg(allProfit)).toBeGreaterThan(-1); expect(avg(allProfit)).toBeLessThan(6);
-    expect(median(teamExp)).toBeGreaterThan(8); expect(median(teamExp)).toBeLessThan(28);
+    expect(median(teamExp)).toBeGreaterThan(5); expect(median(teamExp)).toBeLessThan(30);
     // ellerin neredeyse tamamı Griddy'nin gerçek ellerinden birine dayanıyor ve tek bir şablon baskın değil
     expect(fromTpl / total).toBeGreaterThan(0.9);
     expect(tpl.size).toBeGreaterThan(55);

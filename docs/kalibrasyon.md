@@ -15,17 +15,17 @@ Amaç: Griddy'nin 6 bölümdeki 253 kartı nasıl seçtiğini ölçmek ve deste 
 | `clf.py gen.json` | Rastgele orman sınıflandırıcısı Griddy elini bizimkinden ayırmaya çalışır (5 katlı çapraz doğrulama, 20 tekrar). AUC 0,5 = ayırt edilemez. Bizi ele veren özellikleri de sıralar. |
 | `floor.py gen.json` | Adil karşılaştırma: tutulan bir Griddy bölümü ile bizim tek bir oyunumuz, Griddy'nin öbür 4 bölümüne ne kadar uzak? |
 
-Deste dökümü: `EXPORT=gen.json N=300 npx vitest run src/export.test.ts`. Gerçek kullanımdaki gibi son 6 oyunun oyuncuları dışlanır. `NOAVOID=1` dışlamayı kapatır, `W=3` pencereyi değiştirir.
+Deste dökümü: `EXPORT=gen.json N=300 npx vitest run src/export.test.ts`. Gerçek kullanımdaki gibi tekrar önleme açıktır (son 10 oyunun geçmişi). `NOAVOID=1` kapatır.
 
 ## Griddy'nin seçim mantığı (ölçülen)
 
 - Mevki içinde fiyatlar birbirine yakın (fiyat aralığı ort. fiyatın %30–55'i), kâr farkı büyük.
-- En pahalı kart neredeyse her elde zarar ediyor, en ucuz kart genelde kâr ediyor.
-- Kâr edenler ort. 1,75 katına çıkmış, zarar edenler yarıya inmiş.
+- En pahalı kart ellerin %71'inde zarar ediyor (19 elde kâr ediyor, ör. Declan Rice 2018-19, Dembélé 2021-22). En ucuz kart ellerin %66'sında kâr ediyor. Kural değil, eğilim.
+- Kâr edenlerin değeri 1,07 ile 5 kat arasında artmış (medyan 1,87 kat), zarar edenler ortalama yarıya inmiş. Sabit bir kat kuralı yok.
 - Yaşlar dar (mevki içi 3–5 yaş), sezonlar yakın (ort. 2,5–3 yıl önce), oyuncular düzenli oynamış (elin en az maçı 24–35).
 - Hücum ellerinde en az bir gerçekten tanınan oyuncu (zirve ≥ 40M) her zaman var.
 - Rastgele seçen takım 6 bölümün hepsinde artıda bitiyor (+7…+25M).
-- Griddy oyuncu tekrarından kaçmıyor: 219 farklı oyuncunun 32'si birden fazla bölümde var (Mac Allister ve Antony 3 bölümde).
+- Griddy oyuncu tekrarından kaçmıyor: 219 farklı oyuncunun 32'si birden fazla bölümde var (Mac Allister ve Antony 3 bölümde). Bunların çoğu farklı sezonuyla (Caicedo 2021-22 → 2023-24), 10'u aynı sezonuyla geliyor.
 
 ## Yinelemeler (300 oyun, son 6 oyunun oyuncuları yasak)
 
@@ -49,7 +49,7 @@ Deste dökümü: `EXPORT=gen.json N=300 npx vitest run src/export.test.ts`. Ger�
 | Ayırt etme AUC (0,5 = ayırt edilemez) | — | 0,81 | 0,63 | 0,52 |
 | Rastgele takım medyanı | +19,3M | +12,1M | +17,4M | +20,0M |
 | Rastgele takım alt %10 | +6,8M (en kötü bölüm) | −4,7M | +10,1M | +10,9M |
-| En pahalı kart batıyor (KL) | evet | hayır | evet | evet |
+| En pahalı kartın battığı el oranı | %71 | — | %66 | — |
 | Mevki içi yaş aralığı, MID/ATT | 3 / 3 | 6 / 5 | 5 / 4 | 5 / 4 |
 | Tek oyun ↔ Griddy bölümü (`floor.py`) | 0,477 | 0,481 | 0,460 | — |
 
@@ -67,4 +67,17 @@ Griddy'ye en çok benzeyen eller, havuzdaki az sayıdaki "ünlü, değeri katlan
 | Son 4 oyun | 0,199 | 0,58 | 60 |
 | **Son 6 oyun (varsayılan)** | 0,212 | 0,63 | 43 (her 7 oyunda bir) |
 
-Varsayılan 6 oyunda bırakıldı, çünkü aynı oyuncunun art arda gelmesi oyuncuların açık şikâyetiydi.
+## v0.5.1: kart düzeyinde tekrar önleme
+
+Oyuncu yerine kart yasaklanıyor. Griddy de aynı oyuncuyu başka sezonuyla tekrar kullanıyor.
+- Aynı kart ve aynı oyuncunun ±1 sezonu son 6 oyunda çıktıysa gelmez.
+- Bir önceki oyunda çıkan oyuncu hiçbir sezonuyla gelmez.
+- Son 10 oyunda kaç kez çıktıysa her biri için uzaklığa +1,5 eklenir. Böylece aynı yüz her oyunda belirmez.
+- Rastgele takım bandı +3…+32M'ye genişletildi; daha az katı.
+
+| Sürüm | Ort. KS | AUC | 300 oyunda en sık oyuncu | Art arda oyunda aynı oyuncu |
+|---|---|---|---|---|
+| v0.5 (oyuncu 6 oyun yasak) | 0,212 | 0,63 | 43 | yok |
+| Sadece kart yasağı, sıklık cezası yok | 0,199 | 0,61 | 118 (Cucurella) | %4,7 |
+| **v0.5.1** | 0,207 | 0,62 | 87 | yok |
+| Sıklık cezası 3 / 5 | 0,213 / 0,222 | 0,63 / 0,66 | 69 / 66 | yok |

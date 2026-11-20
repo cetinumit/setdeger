@@ -1,3 +1,4 @@
+import { HISTORY_GAMES, type History } from '../engine/deck';
 import type { Match } from '../engine/match';
 import type { Settings } from '../engine/types';
 
@@ -28,7 +29,7 @@ export const PALETTE: { name: string; color: string; plural: string }[] = [
   { name: 'Pembe', color: '#f472b6', plural: 'Pembeler' },
 ];
 
-const K = { match: 'setdeger.match.v1', settings: 'setdeger.settings.v1', teams: 'setdeger.teams.v1', mute: 'setdeger.mute', recent: 'setdeger.recent.v1' };
+const K = { match: 'setdeger.match.v1', settings: 'setdeger.settings.v1', teams: 'setdeger.teams.v1', mute: 'setdeger.mute', recent: 'setdeger.recent.v2' };
 const get = <T,>(k: string): T | null => { try { const v = localStorage.getItem(k); return v ? (JSON.parse(v) as T) : null; } catch { return null; } };
 const set = (k: string, v: unknown) => { try { if (v === null) localStorage.removeItem(k); else localStorage.setItem(k, JSON.stringify(v)); } catch { /* yok say */ } };
 
@@ -39,9 +40,9 @@ export const store = {
   saveSettings: (s: Settings) => set(K.settings, s),
   loadTeams: () => get<{ names: [string, string]; colors: [string, string] }>(K.teams),
   saveTeams: (t: { names: [string, string]; colors: [string, string] }) => set(K.teams, t),
-  /** son 6 oyunda çıkan oyuncular (tekrar gelmesin diye) */
-  recentPlayers: () => new Set((get<number[][]>(K.recent) ?? []).flat()),
-  pushRecent: (pids: number[]) => set(K.recent, [...(get<number[][]>(K.recent) ?? []), pids].slice(-6)),
+  /** son oyunlarda çıkan kartlar (tekrar önleme, bkz. deck.ts recentFrom) */
+  history: () => get<History>(K.recent) ?? [],
+  pushHistory: (game: History[number]) => set(K.recent, [...(get<History>(K.recent) ?? []), game].slice(-HISTORY_GAMES)),
   loadMute: () => get<boolean>(K.mute) ?? false,
   saveMute: (b: boolean) => set(K.mute, b),
 };

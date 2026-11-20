@@ -14,7 +14,7 @@ Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şa
 
 ## v0.2 değişiklikleri
 - Fiyat bandı ayarı (eşit/dar/orta/geniş) kaldırıldı. Deste artık programdan ölçülen mevki profilleriyle (`PROFILE`, deck.ts) üretiliyor: fiyat ve kâr kaleciden forvete büyüyor.
-- Tekrar önleme: son 6 oyunda çıkan oyuncular dışlanıyor (oyun kodu elle yazılmadıysa). "Aynı desteyi tekrar oyna" kayıtlı desteyi kullanıyor.
+- Tekrar önleme: son oyunlarda çıkan kartlar dışlanıyor (oyun kodu elle yazılmadıysa; v0.5'te kart düzeyine geçti). "Aynı desteyi tekrar oyna" kayıtlı desteyi kullanıyor.
 
 ## v0.3 değişiklikleri
 - PWA: `public/manifest.webmanifest`, ikonlar, `public/sw.js` (çevrimdışı). Service worker sadece kendi sitesinde (https, iframe değil) kaydolur.
@@ -28,9 +28,9 @@ Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şa
 
 ## v0.5 değişiklikleri
 - Deste artık Griddy'nin 66 gerçek elinden şablonla üretiliyor (`templates.ts`, `buildSlotTemplate`). Profil üreticisi yedek.
-- Deste, rastgele seçen takımın beklentisi +8…+28M bandına düşene kadar (en fazla 8 kez) yeniden kuruluyor.
-- Tekrar yasağı son çare dışında hiçbir seviyede delinmiyor.
-- Ölçüm araçları `docs/kalibrasyon/`: `fp.py` (parmak izi + KS), `clf.py` (Griddy elini bizimkinden ayırma testi, AUC), `floor.py`. Deste dökümü: `EXPORT=çıktı.json N=300 npx vitest run src/export.test.ts` (`NOAVOID=1` tekrar yasağını kapatır, `W=3` pencereyi değiştirir). Ayrıntı: `docs/kalibrasyon.md`.
+- Deste, rastgele seçen takımın beklentisi +3…+32M bandına düşene kadar (en fazla 8 kez) yeniden kuruluyor.
+- Tekrar önleme kart düzeyinde (`recentFrom`, deck.ts): aynı kart ±1 sezon 6 oyun yasak, önceki oyunun oyuncusu yasak, son 10 oyunda sık çıkana ceza. Oyuncu başka sezonuyla dönebilir. localStorage anahtarı `setdeger.recent.v2`.
+- Ölçüm araçları `docs/kalibrasyon/`: `fp.py` (parmak izi + KS), `clf.py` (Griddy elini bizimkinden ayırma testi, AUC), `floor.py`. Deste dökümü: `EXPORT=çıktı.json N=300 npx vitest run src/export.test.ts` (`NOAVOID=1` tekrar önlemeyi kapatır). Ayrıntı: `docs/kalibrasyon.md`.
 
 ## Şartnameden sapmalar ve varsayımlar
 - Blok penceresi 5 değil 10 saniye; aynı ekranda tartışmaya zaman kalsın diye.

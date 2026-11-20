@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { buildDeck } from './engine/deck';
+import { buildDeck, historyEntry, recentFrom } from './engine/deck';
 import { newMatch, type Match, type TeamIx } from './engine/match';
 import { loadPool } from './engine/pool';
 import { randomCode } from './engine/rng';
@@ -35,7 +35,7 @@ export default function App() {
 
   // Elle girilen kod: her zaman aynı deste. Rastgele kod: son oyunlarda çıkan oyuncular dışlanır.
   const makeDeck = (s: Settings, seed: string, typed: boolean): Deck =>
-    ({ ...buildDeck(pool!, s, seed, typed ? new Set() : store.recentPlayers()), fresh: !typed });
+    ({ ...buildDeck(pool!, s, seed, typed ? undefined : recentFrom(store.history())), fresh: !typed });
 
   const prepare = (s: Settings, n: [string, string], c: [string, string], seed: string, typed: boolean) => {
     if (!pool) return;
@@ -49,7 +49,7 @@ export default function App() {
 
   const begin = (first: TeamIx, p: Pending = pending!) => {
     const deck = p.deck ?? makeDeck(p.s, p.seed, p.typed);
-    if (deck.fresh) store.pushRecent(deck.slots.flatMap(sl => sl.cards.map(c => c.pid)));
+    if (deck.fresh) store.pushHistory(historyEntry(deck.slots.flatMap(sl => sl.cards)));
     setMatch(newMatch(p.s, deck, p.names, p.colors, first));
     setScreen('game');
   };

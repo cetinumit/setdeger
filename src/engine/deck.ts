@@ -75,7 +75,7 @@ const TRIES_PER_LEVEL = 160;
 const CANDIDATES = 24; // her seviyede en fazla bu kadar geçerli kombinasyon toplanır, hedefe en yakını seçilir
 
 export function buildSlotProfile(
-  rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Set<number>, wantTr: boolean,
+  rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Recent, wantTr: boolean,
 ): Slot {
   const n = s.nCards;
   const d = DIFF[s.difficulty];
@@ -84,7 +84,7 @@ export function buildSlotProfile(
 
   // 4. seviye son çare: son oyunlarda çıkan oyuncular ancak başka hiçbir yol kalmazsa gelir
   for (let relax = 0; relax < 5; relax++) {
-    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 4 ? !avoid.has(c.pid) : true));
+    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 4 ? !avoided(avoid, c) : true));
     if (pool.length < n) continue;
     const widen = 1 + 0.5 * relax;
     const found: { cards: Card[]; score: number }[] = [];
@@ -201,12 +201,12 @@ const SCALE: [number, number] = [0.92, 1.08];
 const MAX_D = 25; // bundan kötüyse şablonu bırak, profil üreticisine düş
 
 export function buildSlotTemplate(
-  rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Set<number>, wantTr: boolean, usedT: Set<string>,
+  rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Recent, wantTr: boolean, usedT: Set<string>,
 ): Slot | null {
   const n = s.nCards;
   const tplPos = pos === 'KL' || s.escalate ? pos : pick(rng, ['SGB', 'STP', 'SLB', 'DOS', 'MOS', 'OOS', 'SGK', 'SLK', 'SF'] as Pos[]);
   const list = shuffle(rng, (TEMPLATES[tplPos] ?? []).filter(t => !usedT.has(t.src)));
-  const base = cands.filter(c => c.pos === pos && !used.has(c.pid) && !avoid.has(c.pid));
+  const base = cands.filter(c => c.pos === pos && !used.has(c.pid) && !avoided(avoid, c));
   const TOP = 6;
   // Şablonlar arasında "en kolayı" seçmiyoruz: öyle yapınca havuzda karşılığı bol olan birkaç şablon
   // (ucuz ve küçük kârlı olanlar) eli ele geçiriyor. Sıradaki şablon yeterince karşılanabiliyorsa o kullanılır.
@@ -220,7 +220,7 @@ export function buildSlotTemplate(
       const peakMin = Math.max(T_PEAK_MIN[s.difficulty], x.p * T_PEAK_FAC[s.difficulty]);
       return base
         .filter(c => cls(c.profit) === cls(x.k * scale))
-        .map(c => ({ c, d: cardDist(c, x, scale, peakMin) + rng() * 0.4 }))
+        .map(c => ({ c, d: cardDist(c, x, scale, peakMin) + SEEN_PENALTY * (avoid.seen.get(c.pid) ?? 0) + rng() * 0.4 }))
         .sort((a, b) => a.d - b.d).slice(0, TOP);
     });
     if (near.some(l => !l.length)) continue;
@@ -270,23 +270,47 @@ export function buildSlotTemplate(
 }
 
 /**
- * avoid: son oyunlarda çıkmış oyuncular (tekrar gelmesin diye). Oyun kodu elle girildiyse boş verilir,
- * böylece aynı kod her zaman aynı desteyi üretir.
+ * Tekrar önleme. Griddy aynı oyuncuyu farklı bölümlerde tekrar kullanıyor (219 oyuncunun 32'si),
+ * bu yüzden oyuncuyu uzun süre yasaklamıyoruz:
+ *  - aynı kart (ve aynı oyuncunun ±1 sezonu) son 6 oyunda çıktıysa gelmez,
+ *  - bir önceki oyunda çıkan oyuncu hiçbir sezonuyla gelmez,
+ *  - son 10 oyunda ne kadar sık çıktıysa o kadar zor gelir (aynı yüz her oyunda belirmesin).
+ * Böylece oyuncu, en az 2 sezon uzak bir haliyle geri dönebilir (ör. önce 2018-19, sonra 2023-24).
+ * Oyun kodu elle girildiyse geçmiş boş verilir, böylece aynı kod herkese aynı desteyi verir.
  */
+export type History = [number, number][][]; // oyun başına [oyuncuId, sezonYılı]; eskiden yeniye
+export const HISTORY_GAMES = 10, CARD_GAMES = 6, PLAYER_GAMES = 1, SEEN_PENALTY = 1.5;
+export interface Recent { keys: Set<string>; seen: Map<number, number> }
+export const historyEntry = (cards: { pid: number; season: string }[]): [number, number][] =>
+  cards.map(c => [c.pid, +c.season.slice(0, 4)]);
+export function recentFrom(history: History): Recent {
+  const keys = new Set<string>(), seen = new Map<number, number>();
+  history.slice(-HISTORY_GAMES).forEach((game, i, all) => {
+    const age = all.length - i; // 1 = bir önceki oyun
+    for (const [pid, y] of game) {
+      seen.set(pid, (seen.get(pid) ?? 0) + 1);
+      if (age <= CARD_GAMES) for (const k of [y - 1, y, y + 1]) keys.add(`${pid}:${k}`);
+      if (age <= PLAYER_GAMES) keys.add(`${pid}:*`);
+    }
+  });
+  return { keys, seen };
+}
+const NO_RECENT: Recent = { keys: new Set(), seen: new Map() };
+const avoided = (r: Recent, c: Card) => r.keys.size > 0 && (r.keys.has(`${c.pid}:*`) || r.keys.has(`${c.pid}:${c.season.slice(0, 4)}`));
 /** Rastgele seçen takımın beklenen kârı: mevki başına kâr ortalamalarının toplamı. */
 export function randTeam(slots: Slot[]) {
   return slots.reduce((a, sl) => a + sl.cards.reduce((b, c) => b + c.profit, 0) / sl.cards.length, 0);
 }
-const RAND_TEAM: [number, number] = [8, 28];
+const RAND_TEAM: [number, number] = [3, 32];
 
-export function buildDeck(pool: Pool, s: Settings, seed: string, avoid: Set<number> = new Set()): Deck {
+export function buildDeck(pool: Pool, s: Settings, seed: string, avoid: Recent = NO_RECENT): Deck {
   const rng = makeRng(`${seed}|${JSON.stringify(settingsKey(s))}`);
   const cands = filterPool(pool, s);
   const slots = slotsFor(s);
   const trSlots = new Set<number>();
   if (s.turkish) {
     const k = Math.min(slots.length, 2 + Math.floor(rng() * 3));
-    const trCount = (p: Pos) => cands.filter(c => c.pos === p && c.tags.includes('tr_bag') && !avoid.has(c.pid)).length;
+    const trCount = (p: Pos) => cands.filter(c => c.pos === p && c.tags.includes('tr_bag') && !avoided(avoid, c)).length;
     const ok = slots.map((_, i) => i).filter(i => slots[i] !== 'KL' && trCount(slots[i]) >= 6);
     sample(rng, ok, Math.min(k, ok.length)).forEach(i => trSlots.add(i));
   }
@@ -307,7 +331,7 @@ export function buildDeck(pool: Pool, s: Settings, seed: string, avoid: Set<numb
     if (gap < bestGap) { bestGap = gap; out = cand; }
     if (gap === 0) break;
   }
-  return { seed, slots: out, fresh: avoid.size > 0 };
+  return { seed, slots: out, fresh: avoid.keys.size > 0 };
 }
 
 /** Desteyi etkileyen ayarlar (aynı seed + aynı ayarlar = aynı deste). */
