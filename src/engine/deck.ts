@@ -159,6 +159,10 @@ function adaptTemplate(rng: Rng, t: Template, n: number): TCard[] {
   return cards;
 }
 
+// Yaş sıkı eşleşir: gevşek olunca kâr eden kartlar Griddy'dekinden genç geliyor ve
+// "hep en genci al" taktiği fazla kazandırıyor (Griddy'de kâr eden/zarar eden yaş farkı 0,5 yıl).
+const AGE_SD = 1.5;
+
 /** Bir kartın şablon kartına uzaklığı (≈ standart sapma kareleri toplamı; 0 = birebir). */
 function cardDist(c: Card, x: TCard, scale: number, peakMin: number) {
   const v = x.v * scale, k = x.k * scale;
@@ -166,11 +170,11 @@ function cardDist(c: Card, x: TCard, scale: number, peakMin: number) {
   const dr = cls(k) !== 0
     ? (Math.log(Math.max(0.02, c.nowValue / c.value)) - Math.log(Math.max(0.02, (x.v + x.k) / x.v))) / 0.25
     : (c.profit - k) / 3;
-  const da = x.a !== null ? (c.age - x.a) / 3 : 0;
+  const da = x.a !== null ? (c.age - x.a) / AGE_SD : 0;
   const ds = x.s !== null ? (+c.season.slice(0, 4) - x.s) / 2 : 0;
   const dm = x.m === null ? 0 : x.m >= 15 ? Math.max(0, 0.6 * x.m - c.apps) / 8 : Math.max(0, c.apps - 20) / 8;
   const dp = Math.max(0, peakMin - c.peak) / 8;
-  return dv * dv + dr * dr + 0.5 * (da * da + ds * ds) + dm * dm + dp * dp - (c.league === x.l ? 0.3 : 0);
+  return dv * dv + dr * dr + da * da + 0.5 * ds * ds + dm * dm + dp * dp - (c.league === x.l ? 0.3 : 0);
 }
 
 /** Elin bütün olarak şablondan sapması: kart kart yakın olmak yetmiyor, sapmalar birikip
@@ -185,8 +189,14 @@ function handDist(cards: Card[], tc: TCard[], scale: number) {
   const d3 = (mean(cards.map(c => c.profit)) - pm) / (3 + 0.15 * Math.abs(pm));
   const vm = mean(tc.map(x => x.v)) * scale;
   const d4 = (mean(cards.map(c => c.value)) - vm) / Math.max(2, 0.07 * vm);
+  // Sıralar da şablondaki gibi olsun: en genç / en ucuz kart, şablonda da en genç / en ucuz olandır.
+  // Yoksa "hep en genci al" gibi tek bir taktik Griddy'dekinden çok daha iyi işliyor.
+  const rank = (a: number[]) => a.map(x => a.filter(y => y < x).length + (a.filter(y => y === x).length - 1) / 2);
+  const rankGap = (a: number[], b: number[]) => { const ra = rank(a), rb = rank(b); return ra.reduce((t, r, i) => t + (r - rb[i]) ** 2, 0); };
+  const d5 = tc.every(x => x.a !== null) ? rankGap(cards.map(c => c.age), tc.map(x => x.a as number)) : 0;
+  const d6 = rankGap(cards.map(c => c.value), tc.map(x => x.v));
   const seasons = new Set(cards.map(c => c.season)).size, leagues = new Set(cards.map(c => c.league)).size;
-  return d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4 + (seasons < 2 ? 4 : 0) + (leagues < 2 ? 4 : 0);
+  return d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4 + AGE_RANK_W * d5 + RANK_W * d6 + (seasons < 2 ? 4 : 0) + (leagues < 2 ? 4 : 0);
 }
 
 /**
@@ -194,6 +204,7 @@ function handDist(cards: Card[], tc: TCard[], scale: number) {
  * Her şablon kartı için en yakın birkaç aday bulunur, bunlardan rastgele kombinasyonlar denenir ve
  * kart + el uzaklığı en düşük olan alınır. relax, elin şablondan ne kadar saptığını gösterir.
  */
+const RANK_W = 0.5, AGE_RANK_W = 2;
 const ACCEPT = 4;
 // Şablon ölçeği: aynı Griddy eli her seferinde birebir aynı fiyatlarla gelmesin diye ±%8.
 // (Yukarı kaydırmak denendi, 0.98–1.18: benzerlik değişmedi, eşleşme kötüleşti.)

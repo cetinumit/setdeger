@@ -29,6 +29,7 @@ Asıl şartname: `MASTER_PROMPT.md`. Bu dosya, projenin şu anki durumunu ve şa
 ## v0.5 değişiklikleri
 - Deste artık Griddy'nin 66 gerçek elinden şablonla üretiliyor (`templates.ts`, `buildSlotTemplate`). Profil üreticisi yedek.
 - Deste, rastgele seçen takımın beklentisi +3…+32M bandına düşene kadar (en fazla 8 kez) yeniden kuruluyor.
+- Yaş sıkı eşleşir ve elin yaş/fiyat sırası şablona benzer ("hep en genci al" taktiği Griddy'dekinden güçlü çıkmıştı). Simülasyon: `SIM=... N=7 npx vitest run src/sim.test.ts`.
 - Tekrar önleme kart düzeyinde (`recentFrom`, deck.ts): aynı kart ±1 sezon 6 oyun yasak, önceki oyunun oyuncusu yasak, son 10 oyunda sık çıkana ceza. Oyuncu başka sezonuyla dönebilir. localStorage anahtarı `setdeger.recent.v2`.
 - Ölçüm araçları `docs/kalibrasyon/`: `fp.py` (parmak izi + KS), `clf.py` (Griddy elini bizimkinden ayırma testi, AUC), `floor.py`. Deste dökümü: `EXPORT=çıktı.json N=300 npx vitest run src/export.test.ts` (`NOAVOID=1` tekrar önlemeyi kapatır). Ayrıntı: `docs/kalibrasyon.md`.
 

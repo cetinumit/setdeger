@@ -81,3 +81,27 @@ Oyuncu yerine kart yasaklanıyor. Griddy de aynı oyuncuyu başka sezonuyla tekr
 | Sadece kart yasağı, sıklık cezası yok | 0,199 | 0,61 | 118 (Cucurella) | %4,7 |
 | **v0.5.1** | 0,207 | 0,62 | 87 | yok |
 | Sıklık cezası 3 / 5 | 0,213 / 0,222 | 0,63 / 0,66 | 69 / 66 | yok |
+
+## v0.5.2: yapay zekâ oyuncularla deneme ve yaş düzeltmesi
+
+7 oyun gerçek kullanımdaki gibi art arda üretildi (`SIM=games.json N=7 npx vitest run src/sim.test.ts`). İki yapay zekâ takımı internetsiz, yalnızca isimsiz kartları görerek oynadı. Her biri her mevkide 4 kartı sıraladı, seçim sırayla yapıldı. Jokerler simüle edilmedi.
+
+| Eşleşme | Sonuç |
+|---|---|
+| Uzman (güçlü model) – Taraftar (hafif model) | 7–0, Uzman oyun başına ort. +241M, Taraftar +115M |
+| Uzman – "hep en genci al" | 6–1 |
+| Taraftar – "hep en genci al" | 4–3 |
+| İki yapay zekâ da – rastgele | 7–0 |
+
+- Uzman 308 kartın %74'ünü doğru tanıdı (ör. 2021-22 Saka, 2019-20 Valverde). Bekler, stoperler, yedek kaleciler ve 2024-25 kartları en zor tanınanlar.
+- Taraftar neredeyse hiç kart tanımadı (2 tahmin) ve genç + ucuz kartı seçti.
+
+Bulgu: oyuncuları tanımayan biri "hep en genci al" taktiğiyle de iyi sonuç alıyordu. Bu taktik Griddy'de de işliyor ama bizde daha güçlüydü:
+
+| | Griddy | v0.5.1 | v0.5.2 |
+|---|---|---|---|
+| En genç kart kâr ediyor | %64 | %70 | %65 |
+| "Hep en genç" taktiğinin mükemmel oyuna oranı | %31 | %45 | %39 |
+| "Hep en ucuz" taktiğinin mükemmel oyuna oranı | %40 | %22 | %23 |
+
+Düzeltme: yaş daha sıkı eşleşiyor (`AGE_SD`), elin yaş ve fiyat sırası şablondakine benzetiliyor (`AGE_RANK_W`, `RANK_W`). Kalan fark, tekrar önleme altında havuzda kolay karşılanan şablonların biraz daha sık kullanılmasından geliyor.
