@@ -2,6 +2,7 @@ import { makeRng, pick, sample, shuffle, type Rng } from './rng';
 import { slotsFor } from './settings';
 import { seasonStart } from './pool';
 import type { Card, Deck, Pool, Pos, Settings, Slot } from './types';
+import { TEMPLATES, type TCard, type Template } from './templates';
 
 /*
  * Deste üretimi — programın 6 bölümündeki 253 karttan ölçülen mevki profilleri.
@@ -73,7 +74,7 @@ function upCount(rng: Rng, n: number): number {
 const TRIES_PER_LEVEL = 160;
 const CANDIDATES = 24; // her seviyede en fazla bu kadar geçerli kombinasyon toplanır, hedefe en yakını seçilir
 
-export function buildSlot(
+export function buildSlotProfile(
   rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Set<number>, wantTr: boolean,
 ): Slot {
   const n = s.nCards;
@@ -81,8 +82,9 @@ export function buildSlot(
   const P = pos === 'KL' ? PROFILE.KL : s.escalate ? PROFILE[pos] : FLAT;
   const all = cands.filter(c => c.pos === pos && !used.has(c.pid));
 
-  for (let relax = 0; relax < 4; relax++) {
-    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 3 ? !avoid.has(c.pid) : true));
+  // 4. seviye son çare: son oyunlarda çıkan oyuncular ancak başka hiçbir yol kalmazsa gelir
+  for (let relax = 0; relax < 5; relax++) {
+    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 4 ? !avoid.has(c.pid) : true));
     if (pool.length < n) continue;
     const widen = 1 + 0.5 * relax;
     const found: { cards: Card[]; score: number }[] = [];
@@ -124,21 +126,163 @@ export function buildSlot(
       // en iyi birkaç aday arasından rastgele: hep aynı "mükemmel" kombinasyon gelmesin
       found.sort((a, b) => a.score - b.score);
       const best = pick(rng, found.slice(0, Math.min(4, found.length)));
-      return { pos, cards: shuffle(rng, best.cards), relax };
+      return { pos, cards: shuffle(rng, best.cards), relax: Math.min(relax, 3) };
     }
   }
   throw new Error(`${pos} için uygun kart bulunamadı (lig/sezon filtrelerini genişletin)`);
+}
+
+
+/*
+ * Şablon yöntemi (varsayılan): Griddy'nin 66 elinden biri şablon seçilir; şablondaki her kart için
+ * havuzdan aynı "rolü" oynayan gerçek bir kart bulunur: benzer fiyat, aynı yönde ve benzer büyüklükte kâr,
+ * benzer yaş, yakın sezon, benzer tanınırlık, benzer maç sayısı. Elin tamamı ±%12 ölçeklenir ki
+ * her oyun şablonun birebir kopyası olmasın. Böylece fiyat-kâr ilişkisi ("pahalı olan batar"), yaş ve
+ * sezon yakınlığı, denge gibi Griddy'nin ortak dağılımları kendiliğinden korunur.
+ */
+const T_PEAK_FAC: Record<Settings['difficulty'], number> = { kolay: 0.8, normal: 0.55, uzman: 0.3 };
+const T_PEAK_MIN: Record<Settings['difficulty'], number> = { kolay: 35, normal: 15, uzman: 10 };
+const cls = (k: number) => (k > 1 ? 1 : k < -1 ? -1 : 0);
+
+function adaptTemplate(rng: Rng, t: Template, n: number): TCard[] {
+  let cards = t.cards.slice();
+  while (cards.length > n) {
+    // bir kartı at, ama en az bir artı ve bir eksi kalsın
+    const i = Math.floor(rng() * cards.length);
+    const rest = cards.filter((_, j) => j !== i);
+    if (rest.some(c => c.k > 1) && rest.some(c => c.k < -1)) cards = rest;
+  }
+  while (cards.length < n) {
+    const c = pick(rng, cards), f = 0.8 + rng() * 0.4;
+    cards = [...cards, { ...c, v: Math.round(c.v * f), k: Math.round(c.k * (0.8 + rng() * 0.4)) }];
+  }
+  return cards;
+}
+
+/** Bir kartın şablon kartına uzaklığı (≈ standart sapma kareleri toplamı; 0 = birebir). */
+function cardDist(c: Card, x: TCard, scale: number, peakMin: number) {
+  const v = x.v * scale, k = x.k * scale;
+  const dv = (c.value - v) / Math.max(3, 0.15 * v);
+  const dr = cls(k) !== 0
+    ? (Math.log(Math.max(0.02, c.nowValue / c.value)) - Math.log(Math.max(0.02, (x.v + x.k) / x.v))) / 0.25
+    : (c.profit - k) / 3;
+  const da = x.a !== null ? (c.age - x.a) / 3 : 0;
+  const ds = x.s !== null ? (+c.season.slice(0, 4) - x.s) / 2 : 0;
+  const dm = x.m === null ? 0 : x.m >= 15 ? Math.max(0, 0.6 * x.m - c.apps) / 8 : Math.max(0, c.apps - 20) / 8;
+  const dp = Math.max(0, peakMin - c.peak) / 8;
+  return dv * dv + dr * dr + 0.5 * (da * da + ds * ds) + dm * dm + dp * dp - (c.league === x.l ? 0.3 : 0);
+}
+
+/** Elin bütün olarak şablondan sapması: kart kart yakın olmak yetmiyor, sapmalar birikip
+ *  fiyat aralığını açıyor ve en büyük kârı küçültüyor. */
+function handDist(cards: Card[], tc: TCard[], scale: number) {
+  const mean = (a: number[]) => a.reduce((x, y) => x + y, 0) / a.length;
+  const rr = (v: number[]) => (Math.max(...v) - Math.min(...v)) / mean(v);
+  const d1 = (rr(cards.map(c => c.value)) - rr(tc.map(x => x.v))) / 0.12;
+  const pmax = Math.max(...tc.map(x => x.k)) * scale;
+  const d2 = (Math.max(...cards.map(c => c.profit)) - pmax) / Math.max(5, 0.2 * Math.abs(pmax));
+  const pm = mean(tc.map(x => x.k)) * scale;
+  const d3 = (mean(cards.map(c => c.profit)) - pm) / (3 + 0.15 * Math.abs(pm));
+  const vm = mean(tc.map(x => x.v)) * scale;
+  const d4 = (mean(cards.map(c => c.value)) - vm) / Math.max(2, 0.07 * vm);
+  const seasons = new Set(cards.map(c => c.season)).size, leagues = new Set(cards.map(c => c.league)).size;
+  return d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4 + (seasons < 2 ? 4 : 0) + (leagues < 2 ? 4 : 0);
+}
+
+/**
+ * Şablon eli: Griddy'nin gerçek ellerinden birini seçer ve havuzdan ona en çok benzeyen eli kurar.
+ * Her şablon kartı için en yakın birkaç aday bulunur, bunlardan rastgele kombinasyonlar denenir ve
+ * kart + el uzaklığı en düşük olan alınır. relax, elin şablondan ne kadar saptığını gösterir.
+ */
+const ACCEPT = 4;
+// Şablon ölçeği: aynı Griddy eli her seferinde birebir aynı fiyatlarla gelmesin diye ±%8.
+// (Yukarı kaydırmak denendi, 0.98–1.18: benzerlik değişmedi, eşleşme kötüleşti.)
+const SCALE: [number, number] = [0.92, 1.08];
+const MAX_D = 25; // bundan kötüyse şablonu bırak, profil üreticisine düş
+
+export function buildSlotTemplate(
+  rng: Rng, cands: Card[], pos: Pos, s: Settings, used: Set<number>, avoid: Set<number>, wantTr: boolean, usedT: Set<string>,
+): Slot | null {
+  const n = s.nCards;
+  const tplPos = pos === 'KL' || s.escalate ? pos : pick(rng, ['SGB', 'STP', 'SLB', 'DOS', 'MOS', 'OOS', 'SGK', 'SLK', 'SF'] as Pos[]);
+  const list = shuffle(rng, (TEMPLATES[tplPos] ?? []).filter(t => !usedT.has(t.src)));
+  const base = cands.filter(c => c.pos === pos && !used.has(c.pid) && !avoid.has(c.pid));
+  const TOP = 6;
+  // Şablonlar arasında "en kolayı" seçmiyoruz: öyle yapınca havuzda karşılığı bol olan birkaç şablon
+  // (ucuz ve küçük kârlı olanlar) eli ele geçiriyor. Sıradaki şablon yeterince karşılanabiliyorsa o kullanılır.
+  let best: { d: number; cards: Card[]; src: string } | null = null;
+  for (const t of list.slice(0, 8)) {
+    let bestT: { d: number; cards: Card[]; src: string } | null = null;
+    const tc = adaptTemplate(rng, t, n);
+    const scale = SCALE[0] + rng() * (SCALE[1] - SCALE[0]);
+    // her şablon kartı için en yakın adaylar (rastgele kırpıntı: hep aynı oyuncu gelmesin)
+    const near = tc.map(x => {
+      const peakMin = Math.max(T_PEAK_MIN[s.difficulty], x.p * T_PEAK_FAC[s.difficulty]);
+      return base
+        .filter(c => cls(c.profit) === cls(x.k * scale))
+        .map(c => ({ c, d: cardDist(c, x, scale, peakMin) + rng() * 0.4 }))
+        .sort((a, b) => a.d - b.d).slice(0, TOP);
+    });
+    if (near.some(l => !l.length)) continue;
+    // Türk dokunuşu: Türk adayı en yakın olan şablon kartı Türk karttan seçilir
+    let trIdx = -1;
+    if (wantTr) {
+      let bd = Infinity;
+      tc.forEach((x, i) => {
+        const peakMin = Math.max(T_PEAK_MIN[s.difficulty], x.p * T_PEAK_FAC[s.difficulty]);
+        for (const c of base) {
+          if (!c.tags.includes('tr_bag') || cls(c.profit) !== cls(x.k * scale)) continue;
+          const d = cardDist(c, x, scale, peakMin);
+          if (d < bd) { bd = d; trIdx = i; near[i] = [{ c, d }]; }
+        }
+      });
+      if (trIdx < 0) continue;
+      // yalnızca en iyi Türk eşleşmesi kalsın
+      tc.forEach((x, i) => {
+        if (i !== trIdx && near[i].length === 1 && near[i][0].c.tags.includes('tr_bag')) {
+          const peakMin = Math.max(T_PEAK_MIN[s.difficulty], x.p * T_PEAK_FAC[s.difficulty]);
+          near[i] = base.filter(c => cls(c.profit) === cls(x.k * scale))
+            .map(c => ({ c, d: cardDist(c, x, scale, peakMin) })).sort((a, b) => a.d - b.d).slice(0, TOP);
+        }
+      });
+    }
+    for (let tr = 0; tr < 40; tr++) {
+      const cards: Card[] = []; let dSum = 0, ok = true;
+      for (const l of near) {
+        const opts = l.filter(o => !cards.some(c => c.pid === o.c.pid));
+        if (!opts.length) { ok = false; break; }
+        const w = opts.map(o => Math.exp(-0.7 * (o.d - opts[0].d)));
+        let r = rng() * w.reduce((a, b) => a + b, 0), j = 0;
+        while (j < w.length - 1 && (r -= w[j]) > 0) j++;
+        cards.push(opts[j].c); dSum += Math.max(0, opts[j].d);
+      }
+      if (!ok) continue;
+      const d = dSum / n + handDist(cards, tc, scale);
+      if (!bestT || d < bestT.d) bestT = { d, cards, src: t.src };
+    }
+    if (bestT && (!best || bestT.d < best.d)) best = bestT;
+    if (bestT && bestT.d < ACCEPT) { best = bestT; break; }
+  }
+  if (!best || best.d > MAX_D) return null;
+  usedT.add(best.src);
+  const relax = best.d < 1.5 ? 0 : best.d < 3.5 ? 1 : best.d < 7 ? 2 : 3;
+  return { pos, cards: shuffle(rng, best.cards), relax, tpl: best.src };
 }
 
 /**
  * avoid: son oyunlarda çıkmış oyuncular (tekrar gelmesin diye). Oyun kodu elle girildiyse boş verilir,
  * böylece aynı kod her zaman aynı desteyi üretir.
  */
+/** Rastgele seçen takımın beklenen kârı: mevki başına kâr ortalamalarının toplamı. */
+export function randTeam(slots: Slot[]) {
+  return slots.reduce((a, sl) => a + sl.cards.reduce((b, c) => b + c.profit, 0) / sl.cards.length, 0);
+}
+const RAND_TEAM: [number, number] = [8, 28];
+
 export function buildDeck(pool: Pool, s: Settings, seed: string, avoid: Set<number> = new Set()): Deck {
   const rng = makeRng(`${seed}|${JSON.stringify(settingsKey(s))}`);
   const cands = filterPool(pool, s);
   const slots = slotsFor(s);
-  const used = new Set<number>();
   const trSlots = new Set<number>();
   if (s.turkish) {
     const k = Math.min(slots.length, 2 + Math.floor(rng() * 3));
@@ -146,11 +290,23 @@ export function buildDeck(pool: Pool, s: Settings, seed: string, avoid: Set<numb
     const ok = slots.map((_, i) => i).filter(i => slots[i] !== 'KL' && trCount(slots[i]) >= 6);
     sample(rng, ok, Math.min(k, ok.length)).forEach(i => trSlots.add(i));
   }
-  const out: Slot[] = slots.map((pos, i) => {
-    const slot = buildSlot(rng, cands, pos, s, used, avoid, trSlots.has(i));
-    slot.cards.forEach(c => used.add(c.pid));
-    return slot;
-  });
+  // Griddy'nin 6 oyununda "rastgele seçen takım" hep hafif artıda bitiyor (+7…+25M).
+  // Desteyi birkaç kez kurup bu banda düşeni alıyoruz; düşmezse banda en yakın olanı.
+  let out: Slot[] = [], bestGap = Infinity;
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const used = new Set<number>();
+    const usedT = new Set<string>();
+    const cand: Slot[] = slots.map((pos, i) => {
+      const slot = buildSlotTemplate(rng, cands, pos, s, used, avoid, trSlots.has(i), usedT)
+        ?? buildSlotProfile(rng, cands, pos, s, used, avoid, trSlots.has(i));
+      slot.cards.forEach(c => used.add(c.pid));
+      return slot;
+    });
+    const rt = randTeam(cand) * 11 / cand.length;
+    const gap = Math.max(0, RAND_TEAM[0] - rt, rt - RAND_TEAM[1]);
+    if (gap < bestGap) { bestGap = gap; out = cand; }
+    if (gap === 0) break;
+  }
   return { seed, slots: out, fresh: avoid.size > 0 };
 }
 

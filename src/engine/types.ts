@@ -56,6 +56,8 @@ export interface Slot {
   pos: Pos;
   cards: Card[];
   relax: number;
+  /** Kalibrasyon için: elin dayandığı Griddy şablonu (ör. "V3-2"); yoksa profil üreticisi. */
+  tpl?: string;
 }
 
 export interface Deck {

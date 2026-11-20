@@ -34,6 +34,7 @@ describe('deste üretimi', () => {
   it('kalibrasyon: Klasik ayarda 500 seed (videodaki profiller)', () => {
     const s = defaultSettings();
     const bands: number[] = []; let balanced = 0, total = 0;
+    const tpl = new Map<string, number>(); let fromTpl = 0;
     const magKL: number[] = [], magSF: number[] = [], valKL: number[] = [], valSF: number[] = [], allProfit: number[] = [], teamExp: number[] = [];
     for (let i = 0; i < 500; i++) {
       const d = buildDeck(pool, s, 'kal' + i);
@@ -41,6 +42,7 @@ describe('deste üretimi', () => {
       const pids = d.slots.flatMap(x => x.cards.map(c => c.pid));
       expect(new Set(pids).size).toBe(pids.length);
       for (const sl of d.slots) {
+        if (sl.tpl) { fromTpl++; tpl.set(sl.tpl, (tpl.get(sl.tpl) ?? 0) + 1); }
         const v = sl.cards.map(c => c.value);
         allProfit.push(...sl.cards.map(c => c.profit));
         bands.push(Math.max(...v) - Math.min(...v));
@@ -59,9 +61,13 @@ describe('deste üretimi', () => {
     expect(avg(valSF)).toBeGreaterThan(40); expect(avg(valSF)).toBeLessThan(54);
     expect(avg(magKL)).toBeGreaterThan(7); expect(avg(magKL)).toBeLessThan(14);
     expect(avg(magSF)).toBeGreaterThan(23); expect(avg(magSF)).toBeLessThan(35);
-    // videoda kart başına ort. kâr +2,4M; rastgele oynayan takım 11 mevkide ort. +6…+78M
+    // videoda kart başına ort. kâr +2,4M; rastgele oynayan takım 6 bölümde +7…+25M (medyan +19M)
     expect(avg(allProfit)).toBeGreaterThan(-1); expect(avg(allProfit)).toBeLessThan(6);
-    expect(avg(teamExp)).toBeGreaterThan(0); expect(avg(teamExp)).toBeLessThan(60);
+    expect(median(teamExp)).toBeGreaterThan(8); expect(median(teamExp)).toBeLessThan(28);
+    // ellerin neredeyse tamamı Griddy'nin gerçek ellerinden birine dayanıyor ve tek bir şablon baskın değil
+    expect(fromTpl / total).toBeGreaterThan(0.9);
+    expect(tpl.size).toBeGreaterThan(55);
+    expect(Math.max(...tpl.values()) / fromTpl).toBeLessThan(0.05);
   }, 120_000);
 
   it('tüm ön ayarlar ve uç ayarlar deste üretebilir', () => {

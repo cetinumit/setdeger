@@ -162,13 +162,18 @@ Programdaki 253 karttan ölçülen mevki profilleri. Deste bunlara uymalı:
 | SĞK / SLK | 42–45M | ~13M | 23–25M | ~70M |
 | SF | 47M | ~10M | 29M | ~80M |
 
-Uygulama: `src/engine/deck.ts` içindeki `PROFILE` tablosu. Her mevki için şu değerler tanımlı:
-- fiyat çapası aralığı,
-- fiyat bandı aralığı,
-- hedef ortalama |kâr|,
-- asgari kâr farkı.
+**Ana yöntem: Griddy şablonları (v0.5).** Programdaki 66 elin her biri (fiyat, kâr, yaş, sezon, maç, zirve değer, lig) `src/engine/templates.ts` içinde şablon olarak durur. Bir mevki için:
+1. O mevkinin şablonlarından biri rastgele seçilir (aynı oyunda aynı şablon iki kez kullanılmaz), kart sayısına uyarlanır ve fiyatları ±%8 oynatılır.
+2. Her şablon kartı için havuzdaki en yakın 6 aday bulunur. Uzaklık: fiyat farkı, büyüme oranı (güncel/kart değeri), yaş, sezon, maç sayısı, zirve değer ve lig.
+3. Bu adaylardan 40 kombinasyon denenir. Kart uzaklıklarına el düzeyinde sapma eklenir: göreli fiyat aralığı, en büyük kâr, kâr ortalaması, fiyat ortalaması, sezon ve lig çeşitliliği. En düşük toplam alınır.
+4. Şablon yeterince karşılanıyorsa (toplam < 4) kullanılır. Karşılanmıyorsa sıradaki şablona geçilir. Şablonlar arasında "en kolayı" seçilmez; öyle yapınca havuzda karşılığı bol olan ucuz şablonlar eli ele geçiriyor.
+5. Hiçbir şablon tutmazsa aşağıdaki `PROFILE` üreticisine düşülür (300 oyunda ~%1).
 
-Her mevkide 24'e kadar geçerli kombinasyon toplanır, hedefe en yakın 4 tanesinden biri rastgele seçilir.
+Yedek yöntem: `PROFILE` tablosu. Her mevki için fiyat çapası aralığı, fiyat bandı aralığı, hedef ortalama |kâr| ve asgari kâr farkı tanımlı. Her mevkide 24'e kadar geçerli kombinasyon toplanır, hedefe en yakın 4 tanesinden biri rastgele seçilir.
+
+**Deste düzeyi:** Griddy'nin 6 oyununda "rastgele seçen takım" hep artıda bitiyor (+7…+25M, medyan +19M). Deste 8 kereye kadar yeniden kurulur ve rastgele takım beklentisi +8…+28M bandına düşen ilk deste alınır.
+
+Ölçüm yöntemi ve sonuçlar: `docs/kalibrasyon.md`.
 
 **Kâr dengesi:** Programda bir mevkideki kartların kâr ortalaması hafif artıdadır (medyan +1,2M, ortalama +2,6M, aralık −6…+22M). Kart başına ortalama +2,4M'dir. Deste de bunu korumalı: mevki ortalaması −7…+14M aralığında kalmalı. Böylece rastgele oynayan takım bile maçı eksi yüzlerde bitirmez.
 
@@ -198,6 +203,8 @@ Mevcut TS uygulaması 60 oyunluk ölçümde şu sonuçları verdi:
 - Tekrar önleme açıkken en sık çıkan oyuncu 60 oyunun 11'inde geldi.
 
 **Kalibrasyon testi** (Vitest): 500 seed ile Klasik ayarda deste üret ve şunları doğrula:
+- Ellerin %90'ından fazlası bir Griddy şablonuna dayanıyor, 55'ten fazla farklı şablon kullanılıyor, hiçbir şablon %5'i geçmiyor.
+- Rastgele takım beklentisinin medyanı +8…+28M.
 - Hiç hata yok.
 - Mevki içi değer farkı medyanı ≤ 20M.
 - (2 artı, 2 eksi) şablonunun oranı %50–80 arasında.
