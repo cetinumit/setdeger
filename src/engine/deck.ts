@@ -82,7 +82,7 @@ export function buildSlot(
   const all = cands.filter(c => c.pos === pos && !used.has(c.pid));
 
   for (let relax = 0; relax < 4; relax++) {
-    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 2 ? !avoid.has(c.pid) : true));
+    const pool = all.filter(c => (relax < 3 ? c.peak >= d.otherMin : true) && (relax < 3 ? !avoid.has(c.pid) : true));
     if (pool.length < n) continue;
     const widen = 1 + 0.5 * relax;
     const found: { cards: Card[]; score: number }[] = [];
